@@ -1,19 +1,27 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = env("DATABASE_URL")
 }
+
 generator client {
   provider = "prisma-client-js"
 }
+
 model User {
-  id    String @id @default(uuid())
+  id String @id @default(uuid())
   email String @unique
-}
-model EncryptedData {
-  id        String @id @default(uuid())
-  data      String
-  iv        String
-  authTag   String
-  userId    String
+  password String
+  role String @default("user")
   createdAt DateTime @default(now())
+  encryptedData EncryptedData[]
+}
+
+model EncryptedData {
+  id String @id @default(uuid())
+  data String
+  iv String
+  authTag String
+  userId String
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id])
 }
